@@ -7,7 +7,7 @@ describe("when body is a stream without a .path smaller than sizelimit", functio
     it("should add an ETag", function (done) {
         const app = new Koa();
 
-        app.use(etag());
+        app.use(etag({ sizelimit: 1000 * 1024 }));
 
         app.use(function (ctx, next) {
             return next().then(function () {

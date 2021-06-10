@@ -43,22 +43,35 @@ const sizelimit = 1000 * 1024;
  */
 function streamToBufferandisnotlarger(stream, sizelimit, output) {
     return new Promise((resolve, reject) => {
+        let fail = false;
         let length = 0;
 
         /**
          * @type { Uint8Array[]}
          */
         let buffers = [];
-        stream.on("error", reject);
+        stream.on("error", (e) => {
+            reject(e);
+            fail = true;
+        });
         stream.on("data", (data) => {
+            //console.log(fail);
+            if (fail) {
+                return;
+            }
             buffers.push(data);
 
             length += data.length;
             if (length > sizelimit) {
                 reject(new Error("stream larger than sizelimit:" + sizelimit));
+                fail = true;
             }
         });
         stream.on("end", () => {
+            //console.log(fail);
+            if (fail) {
+                return;
+            }
             resolve(Buffer.concat(buffers));
         });
         stream.pipe(output);
@@ -71,13 +84,17 @@ function streamToBufferandisnotlarger(stream, sizelimit, output) {
 async function getResponseEntity(ctx, sizelimit) {
     // no body
     const body = ctx.body;
-    if (!body || ctx.response.get("etag")) return;
+    if (!body || ctx.response.get("etag")) {
+        return;
+    }
 
     // type
     const status = (ctx.status / 100) | 0;
 
     // 2xx
-    if (status !== 2) return;
+    if (status !== 2) {
+        return;
+    }
 
     if (body instanceof Stream) {
         if (!("path" in body)) {
@@ -92,7 +109,7 @@ async function getResponseEntity(ctx, sizelimit) {
             // body.pipe(tmpstream);
             var tmpbuf;
             try {
-                var tmpbuf = await streamToBufferandisnotlarger(
+                tmpbuf = await streamToBufferandisnotlarger(
                     body,
                     sizelimit,
                     tmpstream
@@ -118,7 +135,9 @@ async function getResponseEntity(ctx, sizelimit) {
  * @param {{ weak?: boolean | undefined; sizelimit?: number | undefined; } | calculate.Options | undefined} options
  */
 function setEtag(ctx, entity, options) {
-    if (!entity) return;
+    if (!entity) {
+        return;
+    }
 
     ctx.response.etag = calculate(entity, options);
 }

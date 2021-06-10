@@ -24,7 +24,7 @@ describe("when body is a stream without a .path", function () {
 
         var response = request(app.listen()).get("/");
         // console.log(response);
-        response.expect("ETag", /^W\/.+/).end(done);
+        response.expect("ETag", /.+/).end(done);
     });
 });
 describe("etag()", function () {

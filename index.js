@@ -17,6 +17,7 @@ const stat = promisify(fs.stat);
  * Add ETag header field.
  * @param {object} [options] see https://github.com/jshttp/etag#options
  * @param {boolean} [options.weak]
+ * @param {number} [options.sizelimit]
  * @return {Function}
  * @api public
  */
@@ -24,15 +25,19 @@ const stat = promisify(fs.stat);
 module.exports = function etag(options) {
     return async function etag(ctx, next) {
         await next();
-        const entity = await getResponseEntity(ctx);
+        const entity = await getResponseEntity(
+            ctx,
+            options?.sizelimit || sizelimit
+        );
         setEtag(ctx, entity, options);
     };
 };
 const sizelimit = 100 * 1024;
 /**
  * @param {Stream} stream
+ * @param { number} sizelimit
  */
-function streamToBufferandisnotlarger(stream) {
+function streamToBufferandisnotlarger(stream, sizelimit) {
     return new Promise((resolve, reject) => {
         let length = 0;
 
@@ -51,7 +56,7 @@ function streamToBufferandisnotlarger(stream) {
         });
     });
 }
-async function getResponseEntity(ctx) {
+async function getResponseEntity(ctx, sizelimit) {
     // no body
     const body = ctx.body;
     if (!body || ctx.response.get("etag")) return;
@@ -75,7 +80,10 @@ async function getResponseEntity(ctx) {
             body.pipe(tmpstream);
             var tmpbuf;
             try {
-                var tmpbuf = await streamToBufferandisnotlarger(body);
+                var tmpbuf = await streamToBufferandisnotlarger(
+                    body,
+                    sizelimit
+                );
                 return tmpbuf;
             } catch (error) {
                 console.error(error);

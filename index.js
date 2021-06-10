@@ -35,7 +35,7 @@ module.exports = function etag(options) {
         setEtag(ctx, entity, options);
     };
 };
-const sizelimit = 100 * 1024;
+const sizelimit = 1000 * 1024;
 /**
  * @param {Stream} stream
  * @param {number} sizelimit

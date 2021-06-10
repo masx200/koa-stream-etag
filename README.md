@@ -1,6 +1,8 @@
-# koa-etag
+# @masx200/koa-stream-etag
 
 forked from https://github.com/koajs/etag
+
+If the response of the koa server is a stream without a path, the response header of etag can also be generated.
 
 [![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
@@ -9,22 +11,28 @@ forked from https://github.com/koajs/etag
 [![License][license-image]][license-url]
 [![Downloads][downloads-image]][downloads-url]
 
-Etag support for Koa responses using [etag](https://github.com/jshttp/etag).
+stream Etag support for Koa responses using [etag](https://github.com/jshttp/etag).
 
 ## Installation
 
+### npm
+
 ```bash
-# npm
-$ npm install koa-etag
-# yarn
-$ yarn add koa-etag
+
+$ npm install @masx200/koa-stream-etag
+```
+
+### yarn
+
+```
+$ yarn add @masx200/koa-stream-etag
 ```
 
 ## Example
 
 ```js
 const conditional = require("koa-conditional-get");
-const etag = require("koa-etag");
+const etag = require("@masx200/koa-stream-etag");
 const Koa = require("koa");
 const app = new Koa();
 

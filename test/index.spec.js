@@ -3,7 +3,7 @@ const Koa = require("koa");
 const etag = require("..");
 const fs = require("fs");
 const stream = require("stream");
-describe("when body is a stream without a .path", function () {
+describe("when body is a stream without a .path not larger", function () {
     it("should add an ETag", function (done) {
         const app = new Koa();
 
@@ -24,7 +24,39 @@ describe("when body is a stream without a .path", function () {
 
         var response = request(app.listen()).get("/");
         // console.log(response);
+        response.expect((r) => {
+            console.log(r.headers);
+            return r;
+        });
         response.expect("ETag", /.+/).end(done);
+    });
+});
+describe("when body is a stream without a .path is larger", function () {
+    it("should add an ETag", function (done) {
+        const app = new Koa();
+
+        app.use(etag({ sizelimit: 1000 }));
+
+        app.use(function (ctx, next) {
+            return next().then(function () {
+                ctx.body = fs.createReadStream("package.json").pipe(
+                    new stream.Transform({
+                        transform(chunk, encoding, callback) {
+                            // console.log(chunk.toString(), encoding);
+                            callback(null, chunk);
+                        },
+                    })
+                );
+            });
+        });
+
+        var response = request(app.listen()).get("/");
+        // console.log(response);
+        response.expect((r) => {
+            console.log(r.headers);
+            return typeof r.headers.etag === "undefined";
+        });
+        response.end(done);
     });
 });
 describe("etag()", function () {

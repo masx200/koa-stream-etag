@@ -86,7 +86,7 @@ async function getResponseEntity(ctx, sizelimit) {
                 );
                 return tmpbuf;
             } catch (error) {
-                console.error(error);
+                // console.error(error);
                 return;
             }
         }

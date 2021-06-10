@@ -1,4 +1,8 @@
 {
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
+    },
     "name": "@masx200/koa-stream-etag",
     "description": "stream ETag support for koa",
     "version": "5.0.0",

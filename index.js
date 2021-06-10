@@ -23,7 +23,10 @@ const stat = promisify(fs.stat);
  */
 
 module.exports = function etag(options) {
-    return async function etag(ctx, next) {
+    return async function etag(
+        /** @type {any} */ ctx,
+        /** @type {() => any} */ next
+    ) {
         await next();
         const entity = await getResponseEntity(
             ctx,
@@ -35,12 +38,16 @@ module.exports = function etag(options) {
 const sizelimit = 100 * 1024;
 /**
  * @param {Stream} stream
- * @param { number} sizelimit
+ * @param {number} sizelimit
+ * @param {Stream.Writable} output
  */
-function streamToBufferandisnotlarger(stream, sizelimit) {
+function streamToBufferandisnotlarger(stream, sizelimit, output) {
     return new Promise((resolve, reject) => {
         let length = 0;
 
+        /**
+         * @type { Uint8Array[]}
+         */
         let buffers = [];
         stream.on("error", reject);
         stream.on("data", (data) => {
@@ -54,8 +61,13 @@ function streamToBufferandisnotlarger(stream, sizelimit) {
         stream.on("end", () => {
             resolve(Buffer.concat(buffers));
         });
+        stream.pipe(output);
     });
 }
+/**
+ * @param {{ body: Stream.Transform; response: { get: (arg0: string) => any; }; status: number; }} ctx
+ * @param {number} sizelimit
+ */
 async function getResponseEntity(ctx, sizelimit) {
     // no body
     const body = ctx.body;
@@ -68,7 +80,7 @@ async function getResponseEntity(ctx, sizelimit) {
     if (status !== 2) return;
 
     if (body instanceof Stream) {
-        if (!body.path) {
+        if (!("path" in body)) {
             var tmpstream = new Stream.Transform({
                 transform(chunk, encoding, callback) {
                     // console.log(chunk.toString(), encoding);
@@ -77,20 +89,22 @@ async function getResponseEntity(ctx, sizelimit) {
             });
 
             ctx.body = tmpstream;
-            body.pipe(tmpstream);
+            // body.pipe(tmpstream);
             var tmpbuf;
             try {
                 var tmpbuf = await streamToBufferandisnotlarger(
                     body,
-                    sizelimit
+                    sizelimit,
+                    tmpstream
                 );
                 return tmpbuf;
             } catch (error) {
                 // console.error(error);
                 return;
             }
+        } else {
+            return await stat(body.path);
         }
-        return await stat(body.path);
     } else if (typeof body === "string" || Buffer.isBuffer(body)) {
         return body;
     } else {
@@ -98,6 +112,11 @@ async function getResponseEntity(ctx, sizelimit) {
     }
 }
 
+/**
+ * @param {{ response: { etag: string; }; }} ctx
+ * @param {string | Buffer | calculate.StatsLike} entity
+ * @param {{ weak?: boolean | undefined; sizelimit?: number | undefined; } | calculate.Options | undefined} options
+ */
 function setEtag(ctx, entity, options) {
     if (!entity) return;
 

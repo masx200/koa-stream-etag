@@ -28,6 +28,28 @@ $ npm install @masx200/koa-stream-etag
 $ yarn add @masx200/koa-stream-etag
 ```
 
+# API
+
+```js
+var etag = require("@masx200/koa-stream-etag");
+```
+
+## `etag([options])`
+
+Generate a strong ETag for the given entity. This should be the complete body of the entity. Strings, Buffers, and fs.Stats are accepted. By default, a strong ETag is generated except for fs.Stats, which will generate a weak ETag (this can be overwritten by options.weak).
+
+```js
+app.use(etag(options));
+```
+
+## Options
+
+etag accepts these properties in the options object.
+
+### `weak`
+
+Specifies if the generated ETag will include the weak validator mark (that is, the leading W/). The actual entity tag is the same. The default value is false, unless the entity is fs.Stats, in which case it is true.
+
 ## Example
 
 ```js

@@ -76,10 +76,10 @@ async function getResponseEntity(ctx) {
             var tmpbuf;
             try {
                 var tmpbuf = await streamToBufferandisnotlarger(body);
+                return tmpbuf;
             } catch (error) {
                 console.error(error);
-            } finally {
-                return tmpbuf;
+                return;
             }
         }
         return await stat(body.path);

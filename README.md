@@ -23,9 +23,9 @@ $ yarn add koa-etag
 ## Example
 
 ```js
-const conditional = require('koa-conditional-get');
-const etag = require('koa-etag');
-const Koa = require('koa');
+const conditional = require("koa-conditional-get");
+const etag = require("koa-etag");
+const Koa = require("koa");
 const app = new Koa();
 
 // etag works together with conditional-get
@@ -33,12 +33,12 @@ app.use(conditional());
 app.use(etag());
 
 app.use(function (ctx) {
-  ctx.body = 'Hello World';
+    ctx.body = "Hello World";
 });
 
 app.listen(3000);
 
-console.log('listening on port 3000');
+console.log("listening on port 3000");
 ```
 
 ## License

@@ -1,139 +1,160 @@
+const request = require("supertest");
+const Koa = require("koa");
+const etag = require("..");
+const fs = require("fs");
+const stream = require("stream");
+describe("when body is a stream without a .path", function () {
+    it("should add an ETag", function (done) {
+        const app = new Koa();
 
-const request = require('supertest')
-const Koa = require('koa')
-const etag = require('..')
-const fs = require('fs')
+        app.use(etag());
 
-describe('etag()', function () {
-  describe('when body is missing', function () {
-    it('should not add ETag', function (done) {
-      const app = new Koa()
+        app.use(function (ctx, next) {
+            return next().then(function () {
+                ctx.body = fs.createReadStream("package.json").pipe(
+                    new stream.Transform({
+                        transform(chunk, encoding, callback) {
+                            // console.log(chunk.toString(), encoding);
+                            callback(null, chunk);
+                        },
+                    })
+                );
+            });
+        });
 
-      app.use(etag())
+        var response = request(app.listen()).get("/");
+        // console.log(response);
+        response.expect("ETag", /^W\/.+/).end(done);
+    });
+});
+describe("etag()", function () {
+    describe("when body is missing", function () {
+        it("should not add ETag", function (done) {
+            const app = new Koa();
 
-      app.use(function (ctx, next) {
-        return next()
-      })
+            app.use(etag());
 
-      request(app.listen())
-        .get('/')
-        .end(done)
-    })
-  })
+            app.use(function (ctx, next) {
+                return next();
+            });
 
-  describe('when ETag is exists', function () {
-    it('should not add ETag', function (done) {
-      const app = new Koa()
+            request(app.listen()).get("/").end(done);
+        });
+    });
 
-      app.use(etag())
+    describe("when ETag is exists", function () {
+        it("should not add ETag", function (done) {
+            const app = new Koa();
 
-      app.use(function (ctx, next) {
-        ctx.body = { hi: 'etag' }
-        ctx.etag = 'etaghaha'
-        return next()
-      })
+            app.use(etag());
 
-      request(app.listen())
-        .get('/')
-        .expect('etag', '"etaghaha"')
-        .expect({ hi: 'etag' })
-        .expect(200, done)
-    })
-  })
+            app.use(function (ctx, next) {
+                ctx.body = { hi: "etag" };
+                ctx.etag = "etaghaha";
+                return next();
+            });
 
-  describe('when body is a string', function () {
-    it('should add ETag', function (done) {
-      const app = new Koa()
+            request(app.listen())
+                .get("/")
+                .expect("etag", '"etaghaha"')
+                .expect({ hi: "etag" })
+                .expect(200, done);
+        });
+    });
 
-      app.use(etag())
+    describe("when body is a string", function () {
+        it("should add ETag", function (done) {
+            const app = new Koa();
 
-      app.use(function (ctx, next) {
-        return next().then(function () {
-          ctx.body = 'Hello World'
-        })
-      })
+            app.use(etag());
 
-      request(app.listen())
-        .get('/')
-        .expect('ETag', '"b-Ck1VqNd45QIvq3AZd8XYQLvEhtA"')
-        .end(done)
-    })
-  })
+            app.use(function (ctx, next) {
+                return next().then(function () {
+                    ctx.body = "Hello World";
+                });
+            });
 
-  describe('when body is a Buffer', function () {
-    it('should add ETag', function (done) {
-      const app = new Koa()
+            request(app.listen())
+                .get("/")
+                .expect("ETag", '"b-Ck1VqNd45QIvq3AZd8XYQLvEhtA"')
+                .end(done);
+        });
+    });
 
-      app.use(etag())
+    describe("when body is a Buffer", function () {
+        it("should add ETag", function (done) {
+            const app = new Koa();
 
-      app.use(function (ctx, next) {
-        return next().then(function () {
-          ctx.body = Buffer.from('Hello World')
-        })
-      })
+            app.use(etag());
 
-      request(app.listen())
-        .get('/')
-        .expect('ETag', '"b-Ck1VqNd45QIvq3AZd8XYQLvEhtA"')
-        .end(done)
-    })
-  })
+            app.use(function (ctx, next) {
+                return next().then(function () {
+                    ctx.body = Buffer.from("Hello World");
+                });
+            });
 
-  describe('when body is JSON', function () {
-    it('should add ETag', function (done) {
-      const app = new Koa()
+            request(app.listen())
+                .get("/")
+                .expect("ETag", '"b-Ck1VqNd45QIvq3AZd8XYQLvEhtA"')
+                .end(done);
+        });
+    });
 
-      app.use(etag())
+    describe("when body is JSON", function () {
+        it("should add ETag", function (done) {
+            const app = new Koa();
 
-      app.use(function (ctx, next) {
-        return next().then(function () {
-          ctx.body = { foo: 'bar' }
-        })
-      })
+            app.use(etag());
 
-      request(app.listen())
-        .get('/')
-        .expect('ETag', '"d-pedE0BZFQNM7HX6mFsKPL6l+dUo"')
-        .end(done)
-    })
-  })
+            app.use(function (ctx, next) {
+                return next().then(function () {
+                    ctx.body = { foo: "bar" };
+                });
+            });
 
-  describe('when body is a stream with a .path', function () {
-    it('should add an ETag', function (done) {
-      const app = new Koa()
+            request(app.listen())
+                .get("/")
+                .expect("ETag", '"d-pedE0BZFQNM7HX6mFsKPL6l+dUo"')
+                .end(done);
+        });
+    });
 
-      app.use(etag())
+    describe("when body is a stream with a .path", function () {
+        it("should add an ETag", function (done) {
+            const app = new Koa();
 
-      app.use(function (ctx, next) {
-        return next().then(function () {
-          ctx.body = fs.createReadStream('package.json')
-        })
-      })
+            app.use(etag());
 
-      request(app.listen())
-        .get('/')
-        .expect('ETag', /^W\/.+/)
-        .end(done)
-    })
-  })
+            app.use(function (ctx, next) {
+                return next().then(function () {
+                    ctx.body = fs.createReadStream("package.json");
+                });
+            });
 
-  describe('when with options', function () {
-    it('should add weak ETag', function (done) {
-      const app = new Koa()
-      const options = { weak: true }
+            request(app.listen())
+                .get("/")
+                .expect("ETag", /^W\/.+/)
+                .end(done);
+        });
+    });
 
-      app.use(etag(options))
+    describe("when with options", function () {
+        it("should add weak ETag", function (done) {
+            const app = new Koa();
+            const options = { weak: true };
 
-      app.use(function (ctx, next) {
-        return next().then(function () {
-          ctx.body = 'Hello World'
-        })
-      })
+            app.use(etag(options));
 
-      request(app.listen())
-        .get('/')
-        .expect('ETag', 'W/"b-Ck1VqNd45QIvq3AZd8XYQLvEhtA"')
-        .end(done)
-    })
-  })
-})
+            app.use(function (ctx, next) {
+                return next().then(function () {
+                    ctx.body = "Hello World";
+                });
+            });
+
+            request(app.listen())
+                .get("/")
+                .expect("ETag", 'W/"b-Ck1VqNd45QIvq3AZd8XYQLvEhtA"')
+                .end(done);
+        });
+    });
+});

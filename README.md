@@ -41,7 +41,7 @@ Its return value is a koa middleware.
 Generate a strong ETag for the given entity. This should be the complete body of the entity. Strings, Buffers, and fs.Stats are accepted. By default, a strong ETag is generated except for fs.Stats, which will generate a weak ETag (this can be overwritten by options.weak).
 
 ```js
-var options = { weak: false, sizelimit: 100 * 1024 };
+var options = { weak: false, sizelimit: 1000 * 1024 };
 app.use(etag(options));
 ```
 

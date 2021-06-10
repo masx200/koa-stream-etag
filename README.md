@@ -39,6 +39,7 @@ var etag = require("@masx200/koa-stream-etag");
 Generate a strong ETag for the given entity. This should be the complete body of the entity. Strings, Buffers, and fs.Stats are accepted. By default, a strong ETag is generated except for fs.Stats, which will generate a weak ETag (this can be overwritten by options.weak).
 
 ```js
+var options = { weak: false, sizelimit: 100 * 1024 };
 app.use(etag(options));
 ```
 
@@ -50,6 +51,10 @@ etag accepts these properties in the options object.
 
 Specifies if the generated ETag will include the weak validator mark (that is, the leading W/). The actual entity tag is the same. The default value is false, unless the entity is fs.Stats, in which case it is true.
 
+### `sizelimit`
+
+'sizelimit'.Its unit is byte.If the size of the stream is smaller than the'sizelimit', the etag response header will be generated,by converting stream to buffer for etag calculation.
+
 ## Example
 
 ```js
@@ -60,7 +65,7 @@ const app = new Koa();
 
 // etag works together with conditional-get
 app.use(conditional());
-app.use(etag());
+app.use(etag({}));
 
 app.use(function (ctx) {
     ctx.body = "Hello World";

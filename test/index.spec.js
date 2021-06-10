@@ -3,7 +3,7 @@ const Koa = require("koa");
 const etag = require("..");
 const fs = require("fs");
 const stream = require("stream");
-describe("when body is a stream without a .path not larger", function () {
+describe("when body is a stream without a .path smaller than sizelimit", function () {
     it("should add an ETag", function (done) {
         const app = new Koa();
 
@@ -31,8 +31,8 @@ describe("when body is a stream without a .path not larger", function () {
         response.expect("ETag", /.+/).end(done);
     });
 });
-describe("when body is a stream without a .path is larger", function () {
-    it("should add an ETag", function (done) {
+describe("when body is a stream without a .path larger than sizelimit", function () {
+    it("should not add an ETag", function (done) {
         const app = new Koa();
 
         app.use(etag({ sizelimit: 1000 }));
@@ -70,7 +70,13 @@ describe("etag()", function () {
                 return next();
             });
 
-            request(app.listen()).get("/").end(done);
+            request(app.listen())
+                .get("/")
+                .expect((r) => {
+                    console.log(r.headers);
+                    return r;
+                })
+                .end(done);
         });
     });
 
@@ -88,8 +94,13 @@ describe("etag()", function () {
 
             request(app.listen())
                 .get("/")
+                .expect((r) => {
+                    console.log(r.headers);
+                    return r;
+                })
                 .expect("etag", '"etaghaha"')
                 .expect({ hi: "etag" })
+
                 .expect(200, done);
         });
     });
@@ -108,7 +119,12 @@ describe("etag()", function () {
 
             request(app.listen())
                 .get("/")
+                .expect((r) => {
+                    console.log(r.headers);
+                    return r;
+                })
                 .expect("ETag", '"b-Ck1VqNd45QIvq3AZd8XYQLvEhtA"')
+
                 .end(done);
         });
     });
@@ -127,7 +143,12 @@ describe("etag()", function () {
 
             request(app.listen())
                 .get("/")
+                .expect((r) => {
+                    console.log(r.headers);
+                    return r;
+                })
                 .expect("ETag", '"b-Ck1VqNd45QIvq3AZd8XYQLvEhtA"')
+
                 .end(done);
         });
     });
@@ -146,6 +167,10 @@ describe("etag()", function () {
 
             request(app.listen())
                 .get("/")
+                .expect((r) => {
+                    console.log(r.headers);
+                    return r;
+                })
                 .expect("ETag", '"d-pedE0BZFQNM7HX6mFsKPL6l+dUo"')
                 .end(done);
         });
@@ -165,6 +190,10 @@ describe("etag()", function () {
 
             request(app.listen())
                 .get("/")
+                .expect((r) => {
+                    console.log(r.headers);
+                    return r;
+                })
                 .expect("ETag", /^W\/.+/)
                 .end(done);
         });
@@ -185,6 +214,10 @@ describe("etag()", function () {
 
             request(app.listen())
                 .get("/")
+                .expect((r) => {
+                    console.log(r.headers);
+                    return r;
+                })
                 .expect("ETag", 'W/"b-Ck1VqNd45QIvq3AZd8XYQLvEhtA"')
                 .end(done);
         });

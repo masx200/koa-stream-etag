@@ -1,6 +1,6 @@
 {
     "name": "@masx200/koa-stream-etag",
-    "description": "ETag support for koa",
+    "description": "stream ETag support for koa",
     "version": "5.0.0",
     "files": [
         "index.js"

@@ -1,5 +1,7 @@
 # koa-etag
 
+forked from https://github.com/koajs/etag
+
 [![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]

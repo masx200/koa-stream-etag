@@ -28,7 +28,29 @@ module.exports = function etag(options) {
         setEtag(ctx, entity, options);
     };
 };
+const sizelimit = 100 * 1024;
+/**
+ * @param {Stream} stream
+ */
+function streamToBufferandisnotlarger(stream) {
+    return new Promise((resolve, reject) => {
+        let length = 0;
 
+        let buffers = [];
+        stream.on("error", reject);
+        stream.on("data", (data) => {
+            buffers.push(data);
+
+            length += data.length;
+            if (length > sizelimit) {
+                reject(new Error("stream larger than sizelimit:" + sizelimit));
+            }
+        });
+        stream.on("end", () => {
+            resolve(Buffer.concat(buffers));
+        });
+    });
+}
 async function getResponseEntity(ctx) {
     // no body
     const body = ctx.body;
@@ -48,7 +70,17 @@ async function getResponseEntity(ctx) {
                     callback(null, chunk);
                 },
             });
-            return;
+
+            ctx.body = tmpstream;
+            body.pipe(tmpstream);
+            var tmpbuf;
+            try {
+                var tmpbuf = await streamToBufferandisnotlarger(body);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                return tmpbuf;
+            }
         }
         return await stat(body.path);
     } else if (typeof body === "string" || Buffer.isBuffer(body)) {

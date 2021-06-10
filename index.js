@@ -24,7 +24,7 @@ const stat = promisify(fs.stat);
 
 module.exports = function etag(options) {
     return async function etag(
-        /** @type {any} */ ctx,
+        /** @type {{ body?: Stream.Transform; response: { get: (arg0: string) => any; } | { etag: string; }; status?: number; }} */ ctx,
         /** @type {() => any} */ next
     ) {
         await next();
@@ -65,7 +65,7 @@ function streamToBufferandisnotlarger(stream, sizelimit, output) {
     });
 }
 /**
- * @param {{ body: Stream.Transform; response: { get: (arg0: string) => any; }; status: number; }} ctx
+ * @param {{ body?: Stream.Transform; response: { get: (arg0: string) => any; }; status: number; }} ctx
  * @param {number} sizelimit
  */
 async function getResponseEntity(ctx, sizelimit) {

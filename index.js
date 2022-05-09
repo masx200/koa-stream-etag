@@ -30,7 +30,7 @@ module.exports = function etag(options) {
         await next();
         const entity = await getResponseEntity(
             ctx,
-            options&&options.sizelimit || sizelimit
+            (options && options.sizelimit) || sizelimit
         );
         setEtag(ctx, entity, options);
     };

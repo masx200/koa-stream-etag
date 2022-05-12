@@ -69,5 +69,6 @@
     "bugs": {
         "url": "https://github.com/masx200/koa-stream-etag/issues"
     },
-    "homepage": "https://github.com/masx200/koa-stream-etag#readme"
+    "homepage": "https://github.com/masx200/koa-stream-etag#readme",
+    "packageManager": "yarn@3.2.0"
 }

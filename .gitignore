@@ -18,3 +18,5 @@ yarn.lock
 coverage
 .nyc_output
 yarn.lock
+*.zip
+*.gz

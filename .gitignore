@@ -11,12 +11,12 @@ temp
 ###################
 node_modules
 package-lock.json
-yarn.lock
+#yarn.lock
 
 #       NYC       #
 ###################
 coverage
 .nyc_output
-yarn.lock
+#yarn.lock
 *.zip
 *.gz

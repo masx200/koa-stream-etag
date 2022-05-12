@@ -28,6 +28,10 @@ module.exports = function etag(options) {
         /** @type {() => any} */ next
     ) {
         await next();
+        const length = ctx.response.get("content-length");
+        if (length && Number(length) > sizelimit) {
+            return;
+        }
         const entity = await getResponseEntity(
             ctx,
             (options && options.sizelimit) || sizelimit
@@ -120,6 +124,7 @@ async function getResponseEntity(ctx, sizelimit) {
                 return;
             }
         } else {
+            // @ts-ignore
             return await stat(body.path);
         }
     } else if (typeof body === "string" || Buffer.isBuffer(body)) {

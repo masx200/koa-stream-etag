@@ -37,7 +37,7 @@
         "@types/etag": "^1.8.1",
         "@types/koa": "^2.13.4",
         "@types/mocha": "^9.1.1",
-        "@types/node": "^15.12.2",
+        "@types/node": "^17.0.33",
         "@types/supertest": "^2.0.11",
         "eslint": "^8.15.0",
         "eslint-config-standard": "^15.0.1",

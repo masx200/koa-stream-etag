@@ -45,14 +45,29 @@ describe("when body is a stream without a .path smaller than sizelimit", functio
             });
 
         var response = request(app.listen()).get("/");
-        // console.log(response);
+        
         response.expect((r) => {
             console.log(r.headers);
             return r;
         })
         .expect("ETag", /.+/)
-        .expect("X".repeat(5000000))
-        .end(done);
+      //  .expect("X".repeat(5000000))
+        expect(200)
+
+  .end((err, res) => {
+
+    if (err) {
+
+      return done(err);
+
+    }
+
+    expect(res.text).to.be.equal("X".repeat(5000000));
+
+    return done();
+
+  });
+     //   .end(done);
     });
 });
 describe("when body is a stream without a .path larger than sizelimit", function () {

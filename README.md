@@ -55,7 +55,7 @@ Specifies if the generated ETag will include the weak validator mark (that is, t
 
 ### `sizelimit`
 
-'sizelimit'.Its unit is byte.If the size of the stream is smaller than the'sizelimit', the etag response header will be generated,by converting stream to buffer for etag calculation.
+Its unit is byte.If the size of the stream is smaller than the'sizelimit', the etag response header will be generated,by converting stream to buffer for etag calculation.
 
 ## Example
 

@@ -107,7 +107,7 @@ async function getResponseEntity(ctx, sizelimit) {
                 transform(chunk, encoding, callback) {
                     // console.log(chunk.toString(), encoding);
                     callback(null, chunk);
-                },
+                },flush(callback){callback()}
             });
 
             ctx.body = tmpstream;

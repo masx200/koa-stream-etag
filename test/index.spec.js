@@ -63,7 +63,7 @@ describe("when body is a stream without a .path smaller than sizelimit", functio
 
     }
 
-    assert.equal(res.text,"X".repeat(5000000));
+    assert.equal(res.body,"X".repeat(5000000));
 
     return done();
 

@@ -50,8 +50,9 @@ describe("when body is a stream without a .path smaller than sizelimit", functio
             console.log(r.headers);
             return r;
         });
+        response.expect("ETag", /.+/)
         response.expect("X".repeat(5000000))
-        response.expect("ETag", /.+/).end(done);
+        .end(done);
     });
 });
 describe("when body is a stream without a .path larger than sizelimit", function () {

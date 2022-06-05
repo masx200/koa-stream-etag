@@ -3,6 +3,7 @@ const Koa = require("koa");
 const etag = require("..");
 const fs = require("fs");
 const stream = require("stream");
+const assert=require("assert")
 describe("when body is a stream without a .path smaller than sizelimit", function () {
     it("should add an ETag", function (done) {
         const app = new Koa();
@@ -62,7 +63,7 @@ describe("when body is a stream without a .path smaller than sizelimit", functio
 
     }
 
-    expect(res.text).to.be.equal("X".repeat(5000000));
+    assert.equal(res.text,"X".repeat(5000000));
 
     return done();
 

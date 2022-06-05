@@ -72,6 +72,7 @@ function streamToBufferandisnotlarger(stream, sizelimit, output) {
             }
         });
         stream.on("end", () => {
+output.end()
             //console.log(fail);
             if (fail) {
                 return;

@@ -52,7 +52,7 @@ describe("when body is a stream without a .path smaller than sizelimit", functio
         })
         .expect("ETag", /.+/)
       //  .expect("X".repeat(5000000))
-        expect(200)
+        .expect(200)
 
   .end((err, res) => {
 

@@ -103,7 +103,7 @@ async function getResponseEntity(ctx, sizelimit) {
     if (body instanceof Stream) {
         if (!("path" in body)) {
             var tmpstream = new Stream.Transform({
-                writableHighWaterMark: sizelimit,
+                //writableHighWaterMark: sizelimit,
                 transform(chunk, encoding, callback) {
                     // console.log(chunk.toString(), encoding);
                     callback(null, chunk);

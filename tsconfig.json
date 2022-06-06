@@ -4,6 +4,9 @@
         "strict": true,
         "allowJs": true,
         "checkJs": false,
-        "target": "esnext"
+        "target": "esnext",
+        "allowSyntheticDefaultImports": true,
+        "declaration": true,
+        "removeComments": true
     }
 }

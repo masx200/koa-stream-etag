@@ -1,9 +1,9 @@
 const request = require("supertest");
 const Koa = require("koa");
-const etag = require("..");
+const etag = require("../index.js");
 const fs = require("fs");
 const stream = require("stream");
-const assert=require("assert")
+const assert = require("assert");
 describe("when body is a stream without a .path smaller than sizelimit", function () {
     it("should add an ETag", function (done) {
         const app = new Koa();
@@ -46,29 +46,26 @@ describe("when body is a stream without a .path smaller than sizelimit", functio
             });
 
         var response = request(app.listen()).get("/");
-        
-        response.expect((r) => {
-            console.log(r.headers);
-            return r;
-        })
-        .expect("ETag", /.+/)
-      //  .expect("X".repeat(5000000))
-        .expect(200)
 
-  .end((err, res) => {
+        response
+            .expect((r) => {
+                console.log(r.headers);
+                return r;
+            })
+            .expect("ETag", /.+/)
+            //  .expect("X".repeat(5000000))
+            .expect(200)
 
-    if (err) {
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
 
-      return done(err);
+                assert.equal(res.body, "X".repeat(5000000));
 
-    }
-
-    assert.equal(res.body,"X".repeat(5000000));
-
-    return done();
-
-  });
-     //   .end(done);
+                return done();
+            });
+        //   .end(done);
     });
 });
 describe("when body is a stream without a .path larger than sizelimit", function () {

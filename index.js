@@ -72,7 +72,7 @@ function streamToBufferandisnotlarger(stream, sizelimit, output) {
             }
         });
         stream.on("end", () => {
-output.end()
+            output.end();
             //console.log(fail);
             if (fail) {
                 return;
@@ -108,7 +108,10 @@ async function getResponseEntity(ctx, sizelimit) {
                 transform(chunk, encoding, callback) {
                     // console.log(chunk.toString(), encoding);
                     callback(null, chunk);
-                },flush(callback){callback()}
+                },
+                flush(callback) {
+                    callback();
+                },
             });
 
             ctx.body = tmpstream;

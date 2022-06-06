@@ -20,3 +20,4 @@ coverage
 #yarn.lock
 *.zip
 *.gz
+yarn.lock

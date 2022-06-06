@@ -1,17 +1,17 @@
 'use strict';
 
-var Stream = require('stream');
+var stream = require('stream');
 var fs = require('fs');
 var calculate = require('etag');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var Stream__default = /*#__PURE__*/_interopDefaultLegacy(Stream);
+var stream__default = /*#__PURE__*/_interopDefaultLegacy(stream);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 var calculate__default = /*#__PURE__*/_interopDefaultLegacy(calculate);
 
 async function concatArrayBuffer(array) {
-    return Buffer.concat(array);
+    return new Uint8Array(await new Blob(array).arrayBuffer());
 }
 
 async function ReadableStreamSmallerThanLimitToBuffer(readable, sizelimit) {
@@ -45,6 +45,7 @@ async function ReadableStreamSmallerThanLimitToBuffer(readable, sizelimit) {
 const promisify = require("util").promisify;
 const stat = promisify(fs__default["default"].stat);
 async function getResponseEntity(ctx, sizelimit) {
+    const Stream = stream__default["default"].Stream;
     const body = ctx.body;
     if (!body || ctx.response.get("etag")) {
         return;
@@ -53,13 +54,13 @@ async function getResponseEntity(ctx, sizelimit) {
     if (status !== 2) {
         return;
     }
-    if (body instanceof Stream__default["default"]) {
+    if (body instanceof Stream) {
         if (!("path" in body)) {
-            const ReadableStream = Stream__default["default"].Readable.toWeb(body);
+            const ReadableStream = Stream.Readable.toWeb(body);
             const [stream1, stream2] = ReadableStream.tee();
-            ctx.body = Stream__default["default"].Readable.fromWeb(stream1);
+            ctx.body = Stream.Readable.fromWeb(stream1);
             try {
-                return await ReadableStreamSmallerThanLimitToBuffer(stream2, sizelimit);
+                return Buffer.from(await ReadableStreamSmallerThanLimitToBuffer(stream2, sizelimit));
             }
             catch (error) {
                 return;

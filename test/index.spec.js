@@ -1,6 +1,6 @@
 const request = require("supertest");
 const Koa = require("koa");
-const etag = require("../index.js");
+const etag = require("../index.cjs");
 const fs = require("fs");
 const stream = require("stream");
 const assert = require("assert");

@@ -1,5 +1,5 @@
 "use strict";
-import Stream from "stream";
+import stream from "stream";
 import * as koa from "koa";
 import { ReadableStreamSmallerThanLimitToBuffer } from "./ReadableStreamSmallerThanLimitToBuffer";
 
@@ -10,6 +10,7 @@ export async function getResponseEntity(
     ctx: koa.ParameterizedContext<koa.DefaultState, koa.DefaultContext, any>,
     sizelimit: number
 ) {
+    const Stream = stream.Stream;
     // no body
     const body = ctx.body;
     if (!body || ctx.response.get("etag")) {
@@ -33,9 +34,11 @@ export async function getResponseEntity(
             ctx.body = Stream.Readable.fromWeb(stream1);
 
             try {
-                return await ReadableStreamSmallerThanLimitToBuffer(
-                    stream2,
-                    sizelimit
+                return Buffer.from(
+                    await ReadableStreamSmallerThanLimitToBuffer(
+                        stream2,
+                        sizelimit
+                    )
                 );
             } catch (error) {
                 return;

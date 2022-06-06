@@ -1,9 +1,9 @@
-import Stream from 'stream';
+import stream from 'stream';
 import fs from 'fs';
 import calculate from 'etag';
 
 async function concatArrayBuffer(array) {
-    return Buffer.concat(array);
+    return new Uint8Array(await new Blob(array).arrayBuffer());
 }
 
 async function ReadableStreamSmallerThanLimitToBuffer(readable, sizelimit) {
@@ -37,6 +37,7 @@ async function ReadableStreamSmallerThanLimitToBuffer(readable, sizelimit) {
 const promisify = require("util").promisify;
 const stat = promisify(fs.stat);
 async function getResponseEntity(ctx, sizelimit) {
+    const Stream = stream.Stream;
     const body = ctx.body;
     if (!body || ctx.response.get("etag")) {
         return;
@@ -51,7 +52,7 @@ async function getResponseEntity(ctx, sizelimit) {
             const [stream1, stream2] = ReadableStream.tee();
             ctx.body = Stream.Readable.fromWeb(stream1);
             try {
-                return await ReadableStreamSmallerThanLimitToBuffer(stream2, sizelimit);
+                return Buffer.from(await ReadableStreamSmallerThanLimitToBuffer(stream2, sizelimit));
             }
             catch (error) {
                 return;

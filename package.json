@@ -1,6 +1,6 @@
 {
     "exports": {
-        "require": "./index.cjs",
+        "require": "./index.js",
         "import": "./index.mjs"
     },
     "module": "index.mjs",
@@ -13,7 +13,7 @@
     "description": "stream ETag support for koa",
     "version": "5.1.0",
     "files": [
-        "index.cjs",
+        "index.js",
         "index.d.ts",
         "index.mjs"
     ],
@@ -63,7 +63,7 @@
     "enignes": {
         "node": ">= 17.5"
     },
-    "main": "index.cjs",
+    "main": "index.js",
     "author": "masx200 <masx200@qq.com>",
     "directories": {
         "test": "test"

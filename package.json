@@ -45,7 +45,7 @@
         "@types/etag": "^1.8.1",
         "@types/koa": "^2.13.4",
         "@types/mocha": "^9.1.1",
-        "@types/node": "^17.0.40",
+        "@types/node": "^18.0.3",
         "@types/supertest": "^2.0.12",
         "koa": "^2.13.0",
         "mocha": "^10.0.0",

@@ -21,3 +21,4 @@ coverage
 *.zip
 *.gz
 yarn.lock
+yarn.lock

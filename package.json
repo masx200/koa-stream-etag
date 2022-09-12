@@ -41,7 +41,7 @@
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^22.0.0",
-        "@rollup/plugin-node-resolve": "^13.3.0",
+        "@rollup/plugin-node-resolve": "^14.1.0",
         "@types/etag": "^1.8.1",
         "@types/koa": "^2.13.4",
         "@types/mocha": "^9.1.1",
